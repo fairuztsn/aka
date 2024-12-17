@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 
 class Node {
@@ -51,12 +51,24 @@ const insertRandom = timer(function (root: Node | null, n: number): Node | null 
     return root;
 });
 
+function ensureXIsDeepest(root: Node | null, n: number, x: number): Node | null {
+  const numToInsert = Array.from({length: n}, (_, i) => i + 1).filter(num => num !== x);
+  numToInsert.sort(() => Math.random() - 0.5);
+
+  numToInsert.forEach(num => {
+    root = insertNode(root, num);
+  });
+
+  root = insertNode(root, x);
+  return root;
+}
+
 type TreeObject = {
     name: number | string;
     children?: TreeObject[]
 }
 
-function convert(root: Node): TreeObject {
+function convert(root: Node | null): TreeObject {
     if(root == null) {
         return {name: "Empty"}
     }
@@ -81,29 +93,32 @@ function convert(root: Node): TreeObject {
 
     return result
 }
+
 type TreeProps = {
   inputSize: number;
+  ensureWorst: boolean;
+  nodeToFind: number;
 };
 
-const Tree: React.FC<TreeProps> = ({ inputSize }) => {
+const Tree: React.FC<TreeProps> = ({ inputSize, ensureWorst, nodeToFind }) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
+  const [svgDimensions, setSvgDimensions] = useState({ width: 600, height: 400 }); 
 
   useEffect(() => {
-    // Generate the tree data
     let root: Node | null = null;
-    root = insertRandom(root, inputSize);
+    root = ensureWorst ? ensureXIsDeepest(root, inputSize, nodeToFind) : insertRandom(root, inputSize);
     const treeData = convert(root);
+    
+    const width = svgRef.current ? svgRef.current.clientWidth : 600; 
+    const height = svgRef.current ? svgRef.current.clientHeight : 400; 
 
-    const width = 600;
-    const height = 400;
-
-    // Select the SVG and set up dimensions
+    setSvgDimensions({ width, height }); 
+    
     const svg = d3
       .select(svgRef.current)
       .attr("width", width)
       .attr("height", height);
-
-    // Clear previous content
+    
     svg.selectAll("*").remove();
 
     const margin = { top: 20, right: 90, bottom: 30, left: 90 };
@@ -119,7 +134,6 @@ const Tree: React.FC<TreeProps> = ({ inputSize }) => {
 
     treeLayout(rootHierarchy);
 
-    // Draw links
     g.selectAll(".link")
       .data(rootHierarchy.links())
       .enter()
@@ -136,31 +150,31 @@ const Tree: React.FC<TreeProps> = ({ inputSize }) => {
           .y((d: any) => d.x)
       );
 
-    // Draw nodes
+    
     const nodes = g
       .selectAll(".node")
       .data(rootHierarchy.descendants())
       .enter()
       .append("g")
       .attr("class", "node")
-      .attr("transform", (d) => `translate(${d.y},${d.x})`);
+      .attr("transform", (d: any) => `translate(${d.y},${d.x})`);
 
     nodes
       .append("circle")
       .attr("r", 5)
-      .attr("fill", (d) => (d.children ? "#555" : "#999"));
+      .attr("fill", (d: any) => (d.children ? "#555" : "#999"));
 
     nodes
       .append("text")
       .attr("dy", 3)
-      .attr("x", (d) => (d.children ? -10 : 10))
-      .style("text-anchor", (d) => (d.children ? "end" : "start"))
-      .text((d) => d.data.name);
+      .attr("x", (d: any) => (d.children ? -10 : 10))
+      .style("text-anchor", (d: any) => (d.children ? "end" : "start"))
+      .text((d: any) => d.data.name);
 
     return () => {
-      svg.selectAll("*").remove(); // Clean up on unmount
+      svg.selectAll("*").remove(); 
     };
-  }, [inputSize]); // Dependency array includes inputSize
+  }, [inputSize, ensureWorst, nodeToFind]); 
 
   return <svg ref={svgRef}></svg>;
 };

@@ -40,3 +40,66 @@
 .read-the-docs {
   color: #888;
 }
+
+
+.app-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.input-section {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.input-fields {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+a {
+  color: #1976d2;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.tree-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.tree-card {
+  width: 100%;
+ 
+  height: auto;
+ 
+  padding: 20px;
+  box-sizing: border-box;
+ 
+}
+
+.tree-card svg {
+  width: 100%;
+ 
+  height: auto;
+ 
+}
+
+.tree-section {
+  margin-top: 20px;
+}
+
+.tree-card h2 {
+  margin-top: 0;
+  text-align: center;
+  font-size: 18px;
+}
