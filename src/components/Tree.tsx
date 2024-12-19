@@ -56,11 +56,11 @@ const insertRandom = timer(function (root: Node | null, n: number, rootValue: nu
 function range(start: number, end: number, step: number = 1): number[] {
     const result: number[] = [];
     if (step > 0) {
-        for (let i = start; i <= end; i += step) {
+        for (let i = start; i < end; i += step) {
             result.push(i);
         }
     } else {
-        for (let i = start; i >= end; i += step) {
+        for (let i = start; i > end; i += step) {
             result.push(i);
         }
     }
@@ -68,13 +68,20 @@ function range(start: number, end: number, step: number = 1): number[] {
 }
 
 function ensureXIsDeepest(root: Node | null, n: number, x: number): Node | null {
-  let rootValue = (n > 1) ? (Math.max(n-x, x-1) == n-x ? n : 1) : 1;
+  let rootValue;
+  
+  if(n > 1) {
+    rootValue = Math.max(n-x, x-1) == n-x ? n : 1;
+  }else {
+    // Maybe unnecessary
+    rootValue = 1;
+  }
 
   // const numToInsert = Array.from({length: n}, (_, i) => i + 1).filter(num => num !== x);
   // numToInsert.sort(() => Math.random() - 0.5);
 
   const numToInsert = ((rootValue === n) 
-    ? range(n, 1, -1) 
+    ? range(n, 0, -1) 
     : range(1, n + 1)).filter(value => value !== x);
 
   numToInsert.forEach(num => {
