@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 
 class Node {
@@ -35,15 +35,17 @@ function timer<T extends (...args: any[]) => any>(func: T): (...args: Parameters
     };
 }
 
-const insertRandom = timer(function (root: Node | null, n: number): Node | null {
+const insertRandom = timer(function (root: Node | null, n: number, rootValue: number): Node | null {
     if (n <= 0) return null;
 
-    const values = Array.from({ length: n }, (_, i) => i + 1);
+    const values = Array.from({ length: n }, (_, i) => i + 1).filter(num => num !== rootValue);;
 
     for (let i = values.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [values[i], values[j]] = [values[j], values[i]];
     }
+
+    root = insertNode(root, rootValue);
 
     for (const value of values) {
         root = insertNode(root, value);
@@ -51,9 +53,29 @@ const insertRandom = timer(function (root: Node | null, n: number): Node | null 
     return root;
 });
 
+function range(start: number, end: number, step: number = 1): number[] {
+    const result: number[] = [];
+    if (step > 0) {
+        for (let i = start; i <= end; i += step) {
+            result.push(i);
+        }
+    } else {
+        for (let i = start; i >= end; i += step) {
+            result.push(i);
+        }
+    }
+    return result;
+}
+
 function ensureXIsDeepest(root: Node | null, n: number, x: number): Node | null {
-  const numToInsert = Array.from({length: n}, (_, i) => i + 1).filter(num => num !== x);
-  numToInsert.sort(() => Math.random() - 0.5);
+  let rootValue = (n > 1) ? (Math.max(n-x, x-1) == n-x ? n : 1) : 1;
+
+  // const numToInsert = Array.from({length: n}, (_, i) => i + 1).filter(num => num !== x);
+  // numToInsert.sort(() => Math.random() - 0.5);
+
+  const numToInsert = ((rootValue === n) 
+    ? range(n, 1, -1) 
+    : range(1, n + 1)).filter(value => value !== x);
 
   numToInsert.forEach(num => {
     root = insertNode(root, num);
@@ -102,17 +124,14 @@ type TreeProps = {
 
 const Tree: React.FC<TreeProps> = ({ inputSize, ensureWorst, nodeToFind }) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
-  const [svgDimensions, setSvgDimensions] = useState({ width: 600, height: 400 }); 
 
   useEffect(() => {
     let root: Node | null = null;
-    root = ensureWorst ? ensureXIsDeepest(root, inputSize, nodeToFind) : insertRandom(root, inputSize);
+    root = ensureWorst ? ensureXIsDeepest(root, inputSize, nodeToFind) : insertRandom(root, inputSize, nodeToFind);
     const treeData = convert(root);
     
     const width = svgRef.current ? svgRef.current.clientWidth : 600; 
     const height = svgRef.current ? svgRef.current.clientHeight : 400; 
-
-    setSvgDimensions({ width, height }); 
     
     const svg = d3
       .select(svgRef.current)
@@ -143,12 +162,14 @@ const Tree: React.FC<TreeProps> = ({ inputSize, ensureWorst, nodeToFind }) => {
       .attr("stroke", "#555")
       .attr("stroke-width", 1.5)
       .attr(
-        "d",
-        d3
-          .linkHorizontal()
-          .x((d: any) => d.y)
-          .y((d: any) => d.x)
-      );
+      "d",
+      // @ts-ignore
+      d3.linkHorizontal()
+        // @ts-ignore
+        .x((d: { source: any; target: any; index: number }) => d.y)
+        // @ts-ignore
+        .y((d: { source: any; target: any; index: number }) => d.x)
+    );
 
     
     const nodes = g

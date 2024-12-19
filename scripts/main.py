@@ -66,39 +66,35 @@ class BST:
             print(f"Depth {depth}: {nodes}")
 
 def ensure_x_is_deepest(n, x):
+    # Create a list of numbers to insert, ensuring the root is chosen
+    # in a way that makes x the deepest node
+    if n > 1:
+        root_value = n if max(n-x, x-1) == n-x else 1
+    else:
+        root_value = 1
     
-    num_to_insert = list(range(1, n + 1))
-    num_to_insert.remove(x)  
-    random.shuffle(num_to_insert)  
-
+    # Create a list of numbers to insert
+    num_to_insert = list(range(n, 0, -1)) if root_value == n else list(range(1, n+1))
     
+    # Remove `x` from the list to insert it last
+    num_to_insert.remove(x)
+    
+    # Create a new BST and insert numbers except `x`
     bst = BST()
     for num in num_to_insert:
         bst.insert(num)
 
+    # Insert `x` last, ensuring it is placed in the deepest position
     bst.insert(x)
 
+    # Calculate the depth of the tree and the farthest node
     depth, farthest_node = bst.find_depth_and_farthest()
+    
     return bst, depth, farthest_node
 
-# const insertRandom = timer(function (root: Node | null, n: number): Node | null {
-#     if (n <= 0) return null;
 
-#     const values = Array.from({ length: n }, (_, i) => i + 1);
-
-#     for (let i = values.length - 1; i > 0; i--) {
-#         const j = Math.floor(Math.random() * (i + 1));
-#         [values[i], values[j]] = [values[j], values[i]];
-#     }
-
-#     for (const value of values) {
-#         root = insertNode(root, value);
-#     }
-#     return root;
-# });
-
-n = int(input("Input size: "))
-x = int(input("Enter value to search (x): "))
+n = int(input("n: "))
+x = int(input("x: "))
 bst, depth, farthest_node = ensure_x_is_deepest(n, x)
 
 bst.print_by_depth()
