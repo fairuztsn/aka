@@ -6,7 +6,7 @@ import './App.css'
 import Tree from "./components/Tree"
 
 function App() {
-  const [inputSize, setInputSize] = useState(0)
+  const [inputSize, setInputSize] = useState(0);
   const [nodeToFind, setNodeToFind] = useState(0);
   const [inputNodeErr, setInputNodeErr] = useState<string>("");
   const [inputSizeErr, setInputSizeErr] = useState<string>("");
@@ -17,7 +17,7 @@ function App() {
   const handleInputSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const inputSizeValue = parseInt(event.target.value);
     if(inputSizeValue <= 0) {
-      setInputSizeErr("Input size cannot be <= 0.")
+      setInputSizeErr("Input size cannot be less than or equal to zero.")
     }else {
       setInputSizeErr("");
       setInputSize(inputSizeValue || 0);
@@ -29,7 +29,7 @@ function App() {
     if(nodeValue > 0 && nodeValue <= inputSize) {
       setInputNodeErr("");
       setNodeToFind(nodeValue);
-    }else{
+    }else {
       setInputNodeErr(`Node to find must larger than 0 and less or equal than ${inputSize}`);
       setNodeToFind(0);
     }
@@ -51,17 +51,16 @@ function App() {
   }, []);
 
   const handleGenerateTree = () => {
-    if(!inputSize) {
-      setInputSizeErr("'Input size' field cannot be empty.")
-      setTree(null);
-    } 
+    if(!(nodeToFind > 0 && nodeToFind <= inputSize)) {
+      setInputNodeErr(`Node to find must larger than 0 and less or equal than ${inputSize}`);
+      setNodeToFind(0);
+    }
     
-    if(!nodeToFind) {
-      setInputNodeErr("'Node to find' field cannot be empty.")
-      setTree(null);
+    if(inputSize <= 0) {
+      setInputSizeErr("Input size cannot be less than or equal to zero.")
     }
 
-    if(!inputSizeErr && !inputNodeErr) {
+    if(inputSize > 0 && (nodeToFind >= 1 && nodeToFind <= inputSize)) {
       setTree(<div className="tree-section">
         <div className="tree-container">
           <div className="tree-card">
