@@ -4,7 +4,6 @@ import { Button } from '@mui/material';
 
 import './App.css'
 import Tree from "./components/Tree"
-import { ExecutionTimes } from './utils/tree';
 
 function App() {
   const [inputSize, setInputSize] = useState(0);

@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import * as TreeUtils from "../utils/tree"
 import timer from "../utils/timer";
