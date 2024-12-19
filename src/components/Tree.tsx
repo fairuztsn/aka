@@ -1,127 +1,7 @@
-import React, { useEffect, useRef } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
-
-class Node {
-    data: number;
-    left: Node | null;
-    right: Node | null;
-
-    constructor(data: number) {
-        this.data = data;
-        this.left = null;
-        this.right = null;
-    }
-}
-
-function insertNode(root: Node | null, data: number): Node {
-    if (root === null) {
-        return new Node(data);
-    } else if (data < root.data) {
-        root.left = insertNode(root.left, data);
-    } else {
-        root.right = insertNode(root.right, data);
-    }
-    return root;
-}
-
-function timer<T extends (...args: any[]) => any>(func: T): (...args: Parameters<T>) => ReturnType<T> {
-    return function (...args: Parameters<T>): ReturnType<T> {
-        const startTime = Date.now();
-        const result = func(...args);
-        const endTime = Date.now();
-        const elapsedTime = (endTime - startTime) / 1000;
-        console.log(`Function '${func.name}' executed in ${elapsedTime.toFixed(4)} seconds`);
-        return result;
-    };
-}
-
-const insertRandom = timer(function (root: Node | null, n: number, rootValue: number): Node | null {
-    if (n <= 0) return null;
-
-    const values = Array.from({ length: n }, (_, i) => i + 1).filter(num => num !== rootValue);;
-
-    for (let i = values.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [values[i], values[j]] = [values[j], values[i]];
-    }
-
-    root = insertNode(root, rootValue);
-
-    for (const value of values) {
-        root = insertNode(root, value);
-    }
-    return root;
-});
-
-function range(start: number, end: number, step: number = 1): number[] {
-    const result: number[] = [];
-    if (step > 0) {
-        for (let i = start; i < end; i += step) {
-            result.push(i);
-        }
-    } else {
-        for (let i = start; i > end; i += step) {
-            result.push(i);
-        }
-    }
-    return result;
-}
-
-function ensureXIsDeepest(root: Node | null, n: number, x: number): Node | null {
-  let rootValue;
-  
-  if(n > 1) {
-    rootValue = Math.max(n-x, x-1) == n-x ? n : 1;
-  }else {
-    // Maybe unnecessary
-    rootValue = 1;
-  }
-
-  // const numToInsert = Array.from({length: n}, (_, i) => i + 1).filter(num => num !== x);
-  // numToInsert.sort(() => Math.random() - 0.5);
-
-  const numToInsert = ((rootValue === n) 
-    ? range(n, 0, -1) 
-    : range(1, n + 1)).filter(value => value !== x);
-
-  numToInsert.forEach(num => {
-    root = insertNode(root, num);
-  });
-
-  root = insertNode(root, x);
-  return root;
-}
-
-type TreeObject = {
-    name: number | string;
-    children?: TreeObject[]
-}
-
-function convert(root: Node | null): TreeObject {
-    if(root == null) {
-        return {name: "Empty"}
-    }
-
-    const result: TreeObject = {
-        name: root.data,
-    }
-
-    const children: TreeObject[] = [];
-
-    if(root.left) {
-        children.push(convert(root.left))
-    }
-
-    if(root.right) {
-        children.push(convert(root.right))
-    }
-
-    if(children.length > 0) {
-        result.children = children
-    }
-
-    return result
-}
+import * as TreeUtils from "../utils/tree"
+import timer from "../utils/timer";
 
 type TreeProps = {
   inputSize: number;
@@ -129,14 +9,30 @@ type TreeProps = {
   nodeToFind: number;
 };
 
+const executeWithTimer = (root: TreeUtils.Node | null, nodeToFind: number) => {
+  const recursiveSearch = timer(TreeUtils.findNodeRecursively);
+  const iterativeSearch = timer(TreeUtils.findNodeIteratively);
+
+  const recursiveResult = recursiveSearch(root, nodeToFind);
+  const iterativeResult = iterativeSearch(root, nodeToFind);
+
+  return {
+    recursive: recursiveResult.time,
+    iterative: iterativeResult.time,
+  };
+};
+
 const Tree: React.FC<TreeProps> = ({ inputSize, ensureWorst, nodeToFind }) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
+  const [execTime, setExecTime] = useState<TreeUtils.ExecutionTimes>({ recursive: 0, iterative: 0 });
 
   useEffect(() => {
-    let root: Node | null = null;
-    root = ensureWorst ? ensureXIsDeepest(root, inputSize, nodeToFind) : insertRandom(root, inputSize, nodeToFind);
-    const treeData = convert(root);
-    
+    let root: TreeUtils.Node | null = null;
+    root = ensureWorst ? TreeUtils.ensureXIsDeepest(root, inputSize, nodeToFind) : TreeUtils.insertRandom(root, inputSize, nodeToFind);
+    const treeData = TreeUtils.convertToTreeObject(root);
+
+    setExecTime(executeWithTimer(root, nodeToFind));
+
     const width = svgRef.current ? svgRef.current.clientWidth : 600; 
     const height = svgRef.current ? svgRef.current.clientHeight : 400; 
     
@@ -155,7 +51,7 @@ const Tree: React.FC<TreeProps> = ({ inputSize, ensureWorst, nodeToFind }) => {
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const treeLayout = d3.tree<TreeObject>().size([innerHeight, innerWidth]);
+    const treeLayout = d3.tree<TreeUtils.TreeObject>().size([innerHeight, innerWidth]);
     const rootHierarchy = d3.hierarchy(treeData);
 
     treeLayout(rootHierarchy);
@@ -204,7 +100,11 @@ const Tree: React.FC<TreeProps> = ({ inputSize, ensureWorst, nodeToFind }) => {
     };
   }, [inputSize, ensureWorst, nodeToFind]); 
 
-  return <svg ref={svgRef}></svg>;
+  return <>
+    <svg ref={svgRef}></svg> 
+    <p>Recursive: {`${execTime.recursive}`}ms</p>
+    <p>Iterative: {`${execTime.iterative}`}ms</p>
+  </>;
 };
 
 export default Tree;

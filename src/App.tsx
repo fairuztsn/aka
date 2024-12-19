@@ -4,6 +4,7 @@ import { Button } from '@mui/material';
 
 import './App.css'
 import Tree from "./components/Tree"
+import { ExecutionTimes } from './utils/tree';
 
 function App() {
   const [inputSize, setInputSize] = useState(0);
@@ -38,7 +39,6 @@ function App() {
   useEffect(() => {
     const handleGlobalKeyPress = (e: KeyboardEvent) => {
       if (e.key === "Enter" && buttonRef.current) {
-        console.log("Generating tree...");
         buttonRef.current.click();
       }
     };
@@ -70,6 +70,7 @@ function App() {
                 nodeToFind={nodeToFind}
                 ensureWorst={false}
               />
+              
           </div>
           <div className="tree-card">
             <h2>Worst Case</h2>     
