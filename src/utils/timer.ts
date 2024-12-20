@@ -1,20 +1,3 @@
-function waitForNanoseconds(nanos: number): Promise<void> {
-    return new Promise(resolve => {
-        const startTime = performance.now();
-        const endTime = startTime + nanos / 1000000; 
-
-        function checkTime() {
-            if (performance.now() >= endTime) {
-                resolve();
-            } else {
-                requestAnimationFrame(checkTime);
-            }
-        }
-
-        checkTime();
-    });
-}
-
 export default function timer<T extends (...args: any[]) => any>(func: T): (...args: Parameters<T>) => { result: ReturnType<T>, time: number } {
     return function (...args: Parameters<T>): { result: ReturnType<T>, time: number } {
         let totalTime = 0;
