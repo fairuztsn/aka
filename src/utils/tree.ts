@@ -8,6 +8,13 @@ export class Node {
         this.left = null;
         this.right = null;
     }
+
+    get children(): Node[] {
+        const children: Node[] = [];
+        if (this.left) children.push(this.left);
+        if (this.right) children.push(this.right);
+        return children;
+    }
 }
 
 export type TreeObject = {
