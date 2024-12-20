@@ -12,7 +12,7 @@ function Home() {
   const [inputSizeErr, setInputSizeErr] = useState<string>("");
 
   const [nodeToFind, setNodeToFind] = useState(0);
-  const [inputNodeErr, setInputNodeErr] = useState<string>("");
+  const [inputNodeErr, _] = useState<string>("");
 
   const [tree, setTree] = useState<ReactElement | null>();
 
