@@ -30,13 +30,14 @@ function Home() {
 
   const handleNodeToFindChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const nodeValue = parseInt(event.target.value);
-    if(nodeValue > 0 && nodeValue <= inputSize) {
-      setInputNodeErr("");
-      setNodeToFind(nodeValue);
-    }else {
-      setInputNodeErr(`Node to find must larger than 0 and less or equal than ${inputSize}`);
-      setNodeToFind(0);
-    }
+    setNodeToFind(nodeValue);
+    // if(nodeValue > 0 && nodeValue <= inputSize) {
+    //   setInputNodeErr("");
+    //   setNodeToFind(nodeValue);
+    // }else {
+    //   setInputNodeErr(`Node to find must larger than 0 and less or equal than ${inputSize}`);
+    //   setNodeToFind(0);
+    // }
   };
 
   useEffect(() => {
@@ -54,16 +55,18 @@ function Home() {
   }, []);
 
   const handleGenerateTree = () => {
-    if(!(nodeToFind > 0 && nodeToFind <= inputSize)) {
-      setInputNodeErr(`Node to find must larger than 0 and less or equal than ${inputSize}`);
-      setNodeToFind(0);
-    }
+    // if(!(nodeToFind > 0 && nodeToFind <= inputSize)) {
+    //   setInputNodeErr(`Node to find must larger than 0 and less or equal than ${inputSize}`);
+    //   setNodeToFind(0);
+    // }
     
     if(inputSize <= 0) {
       setInputSizeErr("Input size cannot be less than or equal to zero.")
     }
 
-    if(inputSize > 0 && (nodeToFind >= 1 && nodeToFind <= inputSize)) {
+    if(inputSize > 0 
+      // && (nodeToFind >= 1 && nodeToFind <= inputSize)
+    ) {
       setTree(<div className="tree-section">
         <div className="tree-container">
           <div className="tree-card">
@@ -127,7 +130,7 @@ function Home() {
           e.preventDefault();
           navigate("/m");
           }}>
-          Click here to input manually ✍️
+          Click here to input manually ✏️
         </a>
       </div>
       {tree}
