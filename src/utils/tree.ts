@@ -27,6 +27,19 @@ export type ExecutionTimes = {
   iterative: number;
 };
 
+export function contains(root: Node | null, target: number): boolean {
+
+    if (root === null) {
+        return false;
+    }
+
+    if (root.data === target) {
+        return true;
+    }
+
+    return contains(root.left, target) || contains(root.right, target);
+}
+
 export function insertNode(root: Node | null, data: number): Node {
     if (root === null) {
         return new Node(data);

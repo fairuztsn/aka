@@ -4,12 +4,16 @@ import { Button } from '@mui/material';
 
 import './App.css'
 import Tree from "./components/Tree"
+import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
+import SelfInput from './components/SelfInput';
 
-function App() {
+function Home() {
   const [inputSize, setInputSize] = useState(0);
+  const [inputSizeErr, setInputSizeErr] = useState<string>("");
+
   const [nodeToFind, setNodeToFind] = useState(0);
   const [inputNodeErr, setInputNodeErr] = useState<string>("");
-  const [inputSizeErr, setInputSizeErr] = useState<string>("");
+
   const [tree, setTree] = useState<ReactElement | null>();
 
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -33,7 +37,7 @@ function App() {
       setInputNodeErr(`Node to find must larger than 0 and less or equal than ${inputSize}`);
       setNodeToFind(0);
     }
-  }
+  };
 
   useEffect(() => {
     const handleGlobalKeyPress = (e: KeyboardEvent) => {
@@ -68,6 +72,8 @@ function App() {
                 inputSize={inputSize}
                 nodeToFind={nodeToFind}
                 ensureWorst={false}
+                nodeSequence={null}
+                setRootFunction={null}
               />
               
           </div>
@@ -77,19 +83,23 @@ function App() {
                 inputSize={inputSize}
                 nodeToFind={nodeToFind}
                 ensureWorst={true}
+                nodeSequence={null}
+                setRootFunction={null}
               />
           </div>
         </div>
       </div>);
     }
-  }
+  };
+
+  const navigate = useNavigate();
 
   return (
     <>
       <div className="app-container" >
       <div className="input-section">
         <p>n = {inputSize}</p>
-        <div className="input-fields">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <TextField
             id="input-size"
             label="Input size (n)"
@@ -112,8 +122,12 @@ function App() {
             Generate
           </Button>
         </div>
-        <a href="#" onClick={(e) => e.preventDefault()}>
-          Click here to input manually
+        <br />
+        <a href="#" onClick={(e) => {
+          e.preventDefault();
+          navigate("/m");
+          }}>
+          Click here to input manually ✍️
         </a>
       </div>
       {tree}
@@ -122,4 +136,15 @@ function App() {
   )
 }
 
-export default App
+const App = () => {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/m" element={<SelfInput />}></Route>
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default App;
