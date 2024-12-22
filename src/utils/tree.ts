@@ -168,25 +168,17 @@ export function findNodeRecursively(root: Node | null, target: number): Node | n
 }
 
 export function findNodeIteratively(root: Node | null, target: number): Node | null {
-    if(root === null) {
-        return null;
-    }
+    let currentNode = root;
 
-    const stack: Node[] = [root];
-
-    while(stack.length > 0) {
-        const currentNode = stack.pop();
-
-        if(currentNode && currentNode.data === target) {
+    while (currentNode !== null) {
+        if (currentNode.data === target) {
             return currentNode;
         }
 
-        if(currentNode && currentNode.right) {
-            stack.push(currentNode.right);
-        }
-
-        if(currentNode && currentNode.left) {
-            stack.push(currentNode.left);
+        if (target < currentNode.data) {
+            currentNode = currentNode.left;
+        }else {
+            currentNode = currentNode.right;
         }
     }
 
