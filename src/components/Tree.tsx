@@ -39,6 +39,8 @@ const Tree: React.FC<TreeProps> = ({ inputSize, ensureWorst, nodeToFind, nodeSeq
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [execTime, setExecTime] = useState<TreeUtils.ExecutionTimes>({ recursive: 0, iterative: 0 });
 
+  const [shouldShowText, setShouldShowText] = React.useState<boolean>(false);
+
   useEffect(() => {
     let root: TreeUtils.Node | null = null;
 
@@ -68,6 +70,13 @@ const Tree: React.FC<TreeProps> = ({ inputSize, ensureWorst, nodeToFind, nodeSeq
 
     const width = svgRef.current ? svgRef.current.clientWidth : 600; 
     const height = svgRef.current ? svgRef.current.clientHeight : 400; 
+
+    if (inputSize > 1000) {
+      setShouldShowText(true);
+      return;
+    }else {
+      setShouldShowText(false);
+    }
   
     const svg = d3
       .select(svgRef.current)
@@ -127,7 +136,6 @@ const Tree: React.FC<TreeProps> = ({ inputSize, ensureWorst, nodeToFind, nodeSeq
       .attr("x", (d: any) => (d.children ? -10 : 10))
       .style("text-anchor", (d: any) => (d.children ? "end" : "start"))
       .text((d: any) => {
-        console.log(d.data.data)
         return d.data.data;
       });
 
@@ -142,13 +150,20 @@ const Tree: React.FC<TreeProps> = ({ inputSize, ensureWorst, nodeToFind, nodeSeq
       <p>Iterative: {`${execTime.iterative}ns`}</p>
     </>);
 
-  return <>
-    <svg ref={svgRef}></svg> 
-    {/* @ts-ignore */}
-    {nodeSequence === null && <AutomaticallyGeneratedResultData/>}
+  return (
+    <div>
+      {shouldShowText ? (
+        <p style={{ fontSize: "20px", color: "#333", textAlign: "center" }}>
+          Input size terlalu besar untuk ditampilkan!
+        </p>
+      ) : (
+        <svg ref={svgRef} width={600} height={400}>
+        </svg>
+      )}
 
-    {/* {nodeSequence === null} */}
-  </>;
+      {nodeSequence === null && <AutomaticallyGeneratedResultData/>}
+    </div>
+  );
 };
 
 export default Tree;

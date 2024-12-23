@@ -26,7 +26,7 @@ const measureTimeExecutions = (root: TreeUtils.Node | null, nodeToFind: number):
 
     return (
         <>
-            <p>Result: {iterativeResult.result === null ? "not found" : "found"}</p>
+            <p>Result (finding Node({nodeToFind})): {!recursiveResult.result || !iterativeResult.result ? "not found" : "found"}</p>
             <p>Recursive: {recursiveResult.time >= 0 ? `${recursiveResult.time}ns` : `Maximum recursion depth exceeded`}</p>
             <p>Iterative: {`${iterativeResult.time}ns`}</p>
         </>
@@ -63,24 +63,6 @@ const SelfInput = () => {
                         .filter(value => !isNaN(value));  
 
         setNodeSequence(numbers);
-
-        if(nodeSequence.length > 0) {
-            setTree(
-            <div className="tree-section">
-                <div className="tree-container">
-                <div className="tree-card">
-                    <h2>Tree</h2>      
-                    <Tree
-                        inputSize={nodeSequence.length}
-                        nodeToFind={nodeToFind}
-                        ensureWorst={false}
-                        nodeSequence={nodeSequence}
-                        setRootFunction={setRoot}
-                    />
-                </div>
-                </div>
-        </div>);
-        }
     };
 
     const findNode = () => {
@@ -99,6 +81,24 @@ const SelfInput = () => {
         }
 
         if(nodeSequence.length > 0 && nodeToFind) {
+            console.log(timer(TreeUtils.findNodeRecursively)(root, nodeToFind))
+            setTree(
+            <div className="tree-section">
+                <div className="tree-container">
+                <div className="tree-card">
+                    <h2>Tree</h2>      
+                    <Tree
+                        inputSize={nodeSequence.length}
+                        nodeToFind={nodeToFind}
+                        ensureWorst={false}
+                        nodeSequence={nodeSequence}
+                        setRootFunction={setRoot}
+                    />
+                </div>
+                </div>
+            </div>
+            );
+
             const result = measureTimeExecutions(root, nodeToFind!);
             setExecutionResult(result);
         }
