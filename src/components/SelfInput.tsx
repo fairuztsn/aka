@@ -81,7 +81,6 @@ const SelfInput = () => {
         }
 
         if(nodeSequence.length > 0 && nodeToFind) {
-            console.log(timer(TreeUtils.findNodeRecursively)(root, nodeToFind))
             setTree(
             <div className="tree-section">
                 <div className="tree-container">

@@ -146,7 +146,7 @@ const Tree: React.FC<TreeProps> = ({ inputSize, ensureWorst, nodeToFind, nodeSeq
 
 
   const AutomaticallyGeneratedResultData = () => (<>
-      <p>Recursive: {execTime.recursive >= 0n ? `${execTime.recursive}ns` : `Maximum recursion depth exceeded`}</p>
+      <p>Recursive: {execTime.recursive >= 0 ? `${execTime.recursive}ns` : `Maximum recursion depth exceeded`}</p>
       <p>Iterative: {`${execTime.iterative}ns`}</p>
     </>);
 
@@ -154,7 +154,7 @@ const Tree: React.FC<TreeProps> = ({ inputSize, ensureWorst, nodeToFind, nodeSeq
     <div>
       {shouldShowText ? (
         <p style={{ fontSize: "20px", color: "#333", textAlign: "center" }}>
-          Input size terlalu besar untuk ditampilkan!
+          Input size is too large to display!
         </p>
       ) : (
         <svg ref={svgRef} width={600} height={400}>
