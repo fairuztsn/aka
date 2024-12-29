@@ -73,14 +73,7 @@ const SelfInput = () => {
             setInputNodeSequenceErr("");
         }
 
-        if(!nodeToFind) {
-            setInputNodeErr(`Node to find must not be empty`);
-            setNodeToFind(0);
-        }else {
-            setInputNodeErr("");
-        }
-
-        if(nodeSequence.length > 0 && nodeToFind) {
+        if(nodeSequence.length > 0) {
             setTree(
             <div className="tree-section">
                 <div className="tree-container">

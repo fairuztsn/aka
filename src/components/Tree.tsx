@@ -45,14 +45,21 @@ const Tree: React.FC<TreeProps> = ({ inputSize, ensureWorst, nodeToFind, nodeSeq
     let root: TreeUtils.Node | null = null;
 
     if(nodeSequence === null) {
-      if(!(nodeToFind! >= 1 && nodeToFind! <= inputSize)) { // if nodeToFind is outside [1,n]
+      if(!(nodeToFind! >= 1 && nodeToFind! <= inputSize) && inputSize > 1) { 
+          inputSize--;
+      }
+      
+      // if nodeToFind is outside [1,n]
+      if (!(nodeToFind! >= 1 && nodeToFind! <= inputSize) && inputSize > 1) {
         inputSize--;
       }
 
-      if(ensureWorst) {
-        root = TreeUtils.ensureXIsDeepest(root, inputSize, nodeToFind!)
-      }else {
-        root = TreeUtils.insertRandom(root, inputSize, nodeToFind!)
+      if (inputSize === 1 && nodeToFind !== 1) {
+        root = TreeUtils.insertNode(root, nodeToFind!);
+      } else {
+        root = ensureWorst
+          ? TreeUtils.ensureXIsDeepest(root, inputSize, nodeToFind!)
+          : TreeUtils.insertRandom(root, inputSize, nodeToFind!);
       }
       
       setExecTime(measureTimeExecutions(root, nodeToFind!));

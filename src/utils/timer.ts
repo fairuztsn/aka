@@ -12,7 +12,7 @@ export default function timer<T extends (...args: any[]) => any>(func: T): (...a
 
         const end = performance.now();
         const totalDurationMs = end - start;
-        const avgDurationNs = ((totalDurationMs * 1_000_000) / repetitions).toFixed(2);
+        const avgDurationNs = ((totalDurationMs * 1_000_000) / repetitions);
 
         //@ts-ignore
         return { result: result, time: avgDurationNs };
