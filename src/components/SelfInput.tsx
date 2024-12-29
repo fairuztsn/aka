@@ -40,7 +40,7 @@ const SelfInput = () => {
     const [tree, setTree] = useState<ReactElement | null>();
 
     const [nodeToFind, setNodeToFind] = useState<number | null>(null);
-    const [inputNodeErr, setInputNodeErr] = useState<string>("");
+    const [inputNodeErr] = useState<string>("");
 
     const [nodeSequence, setNodeSequence] = useState<number[]>([]);
     const [inputNodeSequenceErr, setInputNodeSequenceErr] = useState<string>("");
