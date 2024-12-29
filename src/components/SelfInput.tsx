@@ -1,4 +1,4 @@
-import { Button, TextField } from "@mui/material";
+import { Alert, Button, TextField } from "@mui/material";
 import { ReactElement, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Tree from "./Tree";
@@ -124,7 +124,7 @@ const SelfInput = () => {
               variant="outlined"
               type="text"
               error={inputNodeSequenceErr !== ""}
-              helperText={inputNodeSequenceErr}
+              helperText={"Warning: Duplicate values in the input node sequence are not allowed and will be removed automatically."}
               placeholder="1 2 3 4 ... n"
               onChange={handleInputNodesChange}
               fullWidth
