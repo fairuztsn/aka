@@ -68,7 +68,7 @@ function Home() {
       // && (nodeToFind >= 1 && nodeToFind <= inputSize)
     ) {
       setTree(<div className="tree-section">
-        <h3>Finding Node ({nodeToFind})</h3>
+        <h3>Finding Node({nodeToFind})</h3>
         <div className="tree-container">
           <div className="tree-card">
             <h2>Best Case (Example)</h2>      

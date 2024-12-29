@@ -57,12 +57,12 @@ const SelfInput = () => {
     const handleInputNodesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const numbers = [...new Set(
             event.target.value
-                .replace(/[^\d\s]/g, '') 
-                .trim()                    
+                .replace(/[^\d\s\-]/g, '')
+                .trim()                     
                 .split(/\s+/)              
                 .map(Number)               
-                .filter(num => !isNaN(num))
-            )];
+                .filter(num => !isNaN(num)) 
+        )];
 
         setNodeSequence(numbers);
     };
