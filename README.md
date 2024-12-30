@@ -32,5 +32,5 @@ This project is deployed using [Vercel](https://vercel.com) and can be accessed 
 
 ## Authors
 
-- [@fairuzsn](https://www.github.com/fairuztsn)
+- [@fairuztsn](https://www.github.com/fairuztsn)
 - [@fizu10](https://www.github.com/fizu10)
